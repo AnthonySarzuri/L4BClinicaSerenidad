@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar Historial Clínico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold text-center mb-6">
+        Registrar Historial Clínico
+      </h1>
+
+      <form
+        action="/historiales"
+        method="POST"
+        class="bg-white p-6 shadow-md rounded-lg"
+      >
+        <input type="hidden" name="paciente_id" value="<%= paciente_id %>" />
+
+        <div class="mb-4">
+          <label for="terapeuta_id" class="block text-gray-700"
+            >Terapeuta:</label
+          >
+          <select
+            name="terapeuta_id"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          >
+            <option value="">Seleccione un terapeuta</option>
+            <% terapeutas.forEach(terapeuta => { %>
+            <option value="<%= terapeuta.terapeuta_id %>">
+              <%= terapeuta.nombre %> <%= terapeuta.apellido %>
+            </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label for="descripcion" class="block text-gray-700"
+            >Descripción:</label
+          >
+          <textarea
+            name="descripcion"
+            required
+            class="w-full p-2 border border-gray-300 rounded"
+          >
+Historial inicial</textarea
+          >
+        </div>
+
+        <div class="mb-4">
+          <label for="observaciones" class="block text-gray-700"
+            >Observaciones:</label
+          >
+          <textarea
+            name="observaciones"
+            class="w-full p-2 border border-gray-300 rounded"
+          >
+Sin observaciones</textarea
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+        >
+          Guardar
+        </button>
+
+        <% if (error) { %>
+        <p class="text-red-500 mt-4"><%= error %></p>
+        <% } %>
+      </form>
+    </div>
+  </body>
+</html>

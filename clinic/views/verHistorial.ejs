@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ver Historial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold text-center mb-6">
+        Historial Clínico de <%= historial.paciente_nombre %> <%=
+        historial.paciente_apellido %>
+      </h1>
+
+      <div class="bg-white p-6 shadow-md rounded-lg mb-6">
+        <p class="text-gray-700 mb-4">
+          <strong>Descripción:</strong> <%= historial.descripcion %>
+        </p>
+        <p class="text-gray-700 mb-4">
+          <strong>Observaciones:</strong> <%= historial.observaciones %>
+        </p>
+        <p class="text-gray-700">
+          <strong>Terapeuta:</strong> <%= historial.terapeuta_nombre %> <%=
+          historial.terapeuta_apellido %>
+        </p>
+      </div>
+
+      <a
+        href="/pacientes"
+        class="block w-full text-center bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+        >Volver al listado de pacientes</a
+      >
+    </div>
+  </body>
+</html>

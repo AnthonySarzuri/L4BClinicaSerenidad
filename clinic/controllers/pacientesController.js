@@ -1,5 +1,22 @@
 const pacientesModel = require('../models/pacientesModel');
 
+exports.cargarFormularioEdicion = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const paciente = await pacientesModel.getPacienteById(id);
+
+        if (!paciente) {
+            // Si no se encuentra el paciente, renderiza la vista 404
+            return res.status(404).render('404', { mensaje: 'Paciente no encontrado' });
+        }
+
+        res.render('editarPaciente', { paciente });
+    } catch (error) {
+        console.error('Error al cargar el formulario de edición:', error);
+        res.status(500).send('Error en el servidor');
+    }
+};
+
 exports.createPaciente = async (req, res) => {
     try {
         const { nombre, apellido, telefono, email, fecha_nacimiento, genero, direccion, numero_seguro } = req.body;

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Paciente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function permitirSoloNumeros(e) {
+            const key = e.key;
+            if (!/[0-9]/.test(key)) {
+                e.preventDefault();
+            }
+        }
+
+        function validarFormulario(event) {
+            const telefono = document.querySelector('input[name="telefono"]').value;
+            const numeroSeguro = document.querySelector('input[name="numero_seguro"]').value;
+            const errores = [];
+
+            if (telefono.length < 8 || isNaN(telefono)) {
+                errores.push("El teléfono debe ser un número de al menos 8 dígitos.");
+            }
+
+            if (isNaN(numeroSeguro)) {
+                errores.push("El número de seguro debe ser numérico.");
+            }
+
+            if (errores.length > 0) {
+                event.preventDefault();
+                mostrarErrores(errores);
+            }
+        }
+
+        function mostrarErrores(errores) {
+            const errorLabel = document.getElementById("errores");
+            errorLabel.innerHTML = errores.join("<br>");
+            errorLabel.style.display = "block";
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-6">
+        <% if (!paciente) { %>
+            <h1 class="text-3xl font-bold text-center mb-6 text-red-600">404 - Paciente no encontrado</h1>
+            <p class="text-center mb-4">El paciente que estás buscando no existe o ha sido inhabilitado.</p>
+            <a href="/pacientes" class="block text-center bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Volver a la página de inicio</a>
+        <% } else { %>
+            <h1 class="text-3xl font-bold text-center mb-6">Editar Paciente</h1>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <label class="text-red-500 text-center block mb-4"><%= error %></label>
+            <% } %>
+
+            <form action="/pacientes/<%= paciente.persona_id %>/editar" method="POST" enctype="multipart/form-data" onsubmit="validarFormulario(event)" class="bg-white p-6 shadow-md rounded-lg">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Nombre:</label>
+                    <input type="text" name="nombre" required placeholder="Nombre" value="<%= paciente.nombre || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Apellido:</label>
+                    <input type="text" name="apellido" required placeholder="Apellido" value="<%= paciente.apellido || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Teléfono:</label>
+                    <input type="text" name="telefono" required onkeypress="permitirSoloNumeros(event)" value="<%= paciente.telefono || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Email:</label>
+                    <input type="email" name="email" required value="<%= paciente.email || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Fecha de Nacimiento:</label>
+                    <input type="date" name="fecha_nacimiento" required value="<%= paciente.fecha_nacimiento.toISOString().split('T')[0] %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Género:</label>
+                    <select name="genero" required class="w-full p-2 border border-gray-300 rounded">
+                        <option value="M" <%= paciente.genero === 'M' ? 'selected' : '' %>>Masculino</option>
+                        <option value="F" <%= paciente.genero === 'F' ? 'selected' : '' %>>Femenino</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Dirección:</label>
+                    <input type="text" name="direccion" required value="<%= paciente.direccion || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Número de Seguro:</label>
+                    <input type="text" name="numero_seguro" required onkeypress="permitirSoloNumeros(event)" value="<%= paciente.numero_seguro || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Foto Actual:</label>
+                    <img src="/uploads/<%= paciente.foto %>" class="w-24 h-24 rounded object-cover" alt="Foto del Paciente" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700">Nueva Foto (Opcional):</label>
+                    <input type="file" name="foto" accept="image/*" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Guardar Cambios</button>
+
+                <label id="errores" class="text-red-500 mt-4 block" style="display: none;"></label>
+            </form>
+        <% } %>
+    </div>
+
+</body>
+</html>

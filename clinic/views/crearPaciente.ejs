@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Paciente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function permitirSoloNumeros(e) {
+            const key = e.key;
+            if (!/[0-9]/.test(key)) {
+                e.preventDefault();
+            }
+        }
+
+        function validarFormulario(event) {
+            const nombre = document.querySelector('input[name="nombre"]').value.trim();
+            const apellido = document.querySelector('input[name="apellido"]').value.trim();
+            const telefono = document.querySelector('input[name="telefono"]').value;
+            const email = document.querySelector('input[name="email"]').value;
+            const fechaNacimiento = new Date(document.querySelector('input[name="fecha_nacimiento"]').value);
+            const codigoPatronal = document.querySelector('input[name="numero_seguro"]').value;
+            const foto = document.querySelector('input[name="foto"]').files.length;
+            const hoy = new Date();
+            const fechaMinima = new Date(hoy.getFullYear() - 5, hoy.getMonth(), hoy.getDate());
+            const fechaMaxima = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate());
+
+            let errores = [];
+
+            // Validación de campos obligatorios
+            if (!nombre || !apellido || !telefono || !email || !codigoPatronal) {
+                errores.push("Todos los campos son obligatorios.");
+            }
+
+            // Validación del nombre y apellido (solo letras y espacios)
+            const nombreApellidoRegex = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?: [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*$/;
+            if (!nombreApellidoRegex.test(nombre)) {
+                errores.push("El nombre debe comenzar con mayúscula y solo contener letras y espacios.");
+            }
+            if (!nombreApellidoRegex.test(apellido)) {
+                errores.push("El apellido debe comenzar con mayúscula y solo contener letras y espacios.");
+            }
+
+            // Validación del teléfono (exactamente 8 dígitos)
+            if (telefono.length !== 8 || !/^\d{8}$/.test(telefono)) {
+                errores.push("El teléfono debe contener exactamente 8 dígitos numéricos.");
+            }
+
+            // Validación del código patronal (exactamente 9 dígitos)
+            if (codigoPatronal.length !== 9 || !/^\d{9}$/.test(codigoPatronal)) {
+                errores.push("El código patronal debe contener exactamente 9 dígitos numéricos.");
+            }
+
+            // Validación de la fecha de nacimiento (entre 5 y 100 años)
+            if (fechaNacimiento > fechaMinima) {
+                errores.push("El paciente debe tener al menos 5 años.");
+            }
+            if (fechaNacimiento < fechaMaxima) {
+                errores.push("La edad del paciente no debe superar los 100 años.");
+            }
+
+            // Verificación de la foto
+            if (foto === 0) {
+                errores.push("Debe subir una foto.");
+            }
+
+            if (errores.length > 0) {
+                event.preventDefault();
+                mostrarErrores(errores);
+            }
+        }
+
+        function mostrarErrores(errores) {
+            const errorLabel = document.getElementById("errores");
+            errorLabel.innerHTML = errores.join("<br>");
+            errorLabel.style.display = "block";
+        }
+
+        window.onload = () => {
+            const fechaNacimiento = document.querySelector('input[name="fecha_nacimiento"]');
+            const hoy = new Date();
+            const fechaMinima = new Date(hoy.getFullYear() - 5, hoy.getMonth(), hoy.getDate());
+            const fechaMaxima = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate());
+            fechaNacimiento.max = fechaMinima.toISOString().split('T')[0];
+            fechaNacimiento.min = fechaMaxima.toISOString().split('T')[0];
+        };
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-6">Crear Paciente</h1>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <label class="text-red-500 text-center block mb-4"><%= error %></label>
+        <% } %>
+
+        <form action="/pacientes" method="POST" enctype="multipart/form-data" onsubmit="validarFormulario(event)" class="bg-white p-6 shadow-md rounded-lg">
+            <div class="mb-4">
+                <label class="block text-gray-700">Nombre:</label>
+                <input type="text" name="nombre" required placeholder="Nombre" value="<%= nombre || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Apellido:</label>
+                <input type="text" name="apellido" required placeholder="Apellido" value="<%= apellido || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Teléfono:</label>
+                <input type="text" name="telefono" required placeholder="Teléfono" onkeypress="permitirSoloNumeros(event)" maxlength="8" value="<%= telefono || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Email:</label>
+                <input type="email" name="email" required placeholder="Email" value="<%= email || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Fecha de Nacimiento:</label>
+                <input type="date" name="fecha_nacimiento" required value="<%= fecha_nacimiento || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Género:</label>
+                <select name="genero" required class="w-full p-2 border border-gray-300 rounded">
+                    <option value="M" <%= genero === 'M' ? 'selected' : '' %>>Masculino</option>
+                    <option value="F" <%= genero === 'F' ? 'selected' : '' %>>Femenino</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Dirección:</label>
+                <input type="text" name="direccion" required placeholder="Dirección" value="<%= direccion || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Código Patronal:</label>
+                <input type="text" name="numero_seguro" required placeholder="Código Patronal" onkeypress="permitirSoloNumeros(event)" maxlength="9" value="<%= numeroSeguro || '' %>" class="w-full p-2 border border-gray-300 rounded" />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Foto:</label>
+                <input type="file" name="foto" accept="image/*" class="w-full p-2 border border-gray-300 rounded" required />
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Crear Paciente</button>
+
+            <label id="errores" class="text-red-500 mt-4 block" style="display: none;"></label>
+        </form>
+    </div>
+</body>
+</html>
