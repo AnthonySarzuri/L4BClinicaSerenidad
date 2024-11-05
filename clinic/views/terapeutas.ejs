@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listado de Terapeutas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold text-center mb-6">Listado de Terapeutas</h1>
+
+      <div class="flex justify-between mb-6">
+        <a
+          href="/terapeutas/nuevo"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >Nuevo Terapeuta</a
+        >
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+          <thead>
+            <tr
+              class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"
+            >
+              <th class="py-3 px-6 text-left">ID</th>
+              <th class="py-3 px-6 text-left">Nombre</th>
+              <th class="py-3 px-6 text-left">Especialidad</th>
+              <th class="py-3 px-6 text-left">Teléfono</th>
+              <th class="py-3 px-6 text-left">Fecha de Nacimiento</th>
+              <th class="py-3 px-6 text-left">Foto</th>
+              <th class="py-3 px-6 text-left">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600 text-sm font-light">
+            <% terapeutas.forEach(terapeuta => { %>
+            <tr class="border-b border-gray-200 hover:bg-gray-100">
+              <td class="py-3 px-6 text-left whitespace-nowrap">
+                <%= terapeuta.terapeuta_id %>
+              </td>
+              <td class="py-3 px-6 text-left">
+                <%= terapeuta.nombre %> <%= terapeuta.apellido %>
+              </td>
+              <td class="py-3 px-6 text-left"><%= terapeuta.especialidad %></td>
+              <td class="py-3 px-6 text-left"><%= terapeuta.telefono %></td>
+              <td class="py-3 px-6 text-left">
+                <%= new Date(terapeuta.fecha_nacimiento).toLocaleDateString() %>
+              </td>
+              <td class="py-3 px-6 text-left">
+                <% if (terapeuta.foto) { %>
+                <img
+                  src="/uploads/<%= terapeuta.foto %>"
+                  alt="Foto"
+                  class="w-24 h-24 rounded object-cover"
+                />
+                <% } else { %>
+                <p>Sin foto</p>
+                <% } %>
+              </td>
+              <td class="py-3 px-6 text-left">
+                <div class="flex space-x-2">
+                  <button
+                    onclick="location.href='/terapeutas/<%= terapeuta.terapeuta_id %>/editar'"
+                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onclick="eliminarTerapeuta('<%= terapeuta.terapeuta_id %>')"
+                    class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      function eliminarTerapeuta(id) {
+        if (confirm("¿Estás seguro de eliminar este terapeuta?")) {
+          fetch(`/terapeutas/${id}/eliminar`, { method: "POST" })
+            .then((response) => {
+              if (response.ok) {
+                alert("Terapeuta eliminado exitosamente.");
+                window.location.reload();
+              } else {
+                alert("Error al eliminar el terapeuta.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Error al eliminar el terapeuta.");
+            });
+        }
+      }
+    </script>
+  </body>
+</html>
