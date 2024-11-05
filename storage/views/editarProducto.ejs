@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Editar Producto</title>
+</head>
+<body>
+    <h1>Editar Producto</h1>
+
+    <form action="/productos/<%= producto.producto_id %>/editar" method="POST">
+        <input type="text" name="nombre" value="<%= producto.nombre %>" required>
+        <input type="text" name="descripcion" value="<%= producto.descripcion %>">
+        <input type="number" step="0.01" name="precio" value="<%= producto.precio %>">
+        <input type="number" name="cantidad" value="<%= producto.cantidad %>">
+        <input type="date" name="fechaCaducidad" value="<%= producto.fechaCaducidad %>">
+        <input type="text" name="NroLote" value="<%= producto.NroLote %>">
+        <input type="date" name="FechaLote" value="<%= producto.FechaLote %>">
+        <select name="drogueria_id">
+            <% droguerias.forEach(drogueria => { %>
+                <option value="<%= drogueria.drogueria_id %>" 
+                    <%= producto.drogueria_id === drogueria.drogueria_id ? 'selected' : '' %>>
+                    <%= drogueria.nombre %>
+                </option>
+            <% }) %>
+        </select>
+        <button type="submit">Guardar</button>
+    </form>
+    
+
+    <a href="/productos">Volver</a>
+</body>
+</html>

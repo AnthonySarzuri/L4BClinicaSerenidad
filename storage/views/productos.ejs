@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Productos - Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <a href="/">Inicio</a>
+        <a href="/productos">Productos</a>
+        <a href="/droguerias">Droguerías</a>
+        <a href="/ventas">Ventas</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Gestión de Productos</h1>
+
+        <% if (mensajeError) { %>
+            <div style="color: red;"><%= mensajeError %></div>
+        <% } %>
+        <form action="/productos" method="POST" onsubmit="return validarFormulario()">
+            <input type="text" name="nombre" placeholder="Nombre del Producto" required minlength="3">
+            <input type="text" name="descripcion" placeholder="Descripción" required minlength="3">
+            <input type="number" step="0.01" name="precio" placeholder="Precio" required min="0.01">
+            <input type="number" name="cantidad" placeholder="Cantidad" required min="1">
+            <input type="text" name="NroLote" placeholder="Número de Lote">
+            <input type="date" name="fechaCaducidad" min="<%= new Date().toISOString().split('T')[0] %>">
+            <select name="drogueria_id" required>
+                <option value="">Seleccione una droguería</option>
+                <% droguerias.forEach(drogueria => { %>
+                    <option value="<%= drogueria.drogueria_id %>"><%= drogueria.nombre %></option>
+                <% }) %>
+            </select>
+            <button type="submit">Agregar</button>
+        </form>
+        
+        <script>
+        function validarFormulario() {
+            const nombre = document.querySelector('input[name="nombre"]').value.trim();
+            const descripcion = document.querySelector('input[name="descripcion"]').value.trim();
+            const precio = document.querySelector('input[name="precio"]').value;
+            const cantidad = document.querySelector('input[name="cantidad"]').value;
+            const fechaCaducidad = document.querySelector('input[name="fechaCaducidad"]').value; // Añadir esta línea
+
+            if (fechaCaducidad === '') {
+                alert('Por favor, ingrese una fecha de caducidad.');
+                return false; // Evita el envío del formulario
+            }
+            if (nombre.length < 3 || !/^[a-zA-Z\s]+$/.test(nombre)) {
+                alert('El nombre del producto es inválido. Debe tener al menos 3 caracteres y solo contener letras y espacios.');
+                return false;
+            }
+            if (descripcion.length < 3) {
+                alert('La descripción es inválida. Debe tener al menos 3 caracteres.');
+                return false;
+            }
+            if (isNaN(precio) || parseFloat(precio) <= 0) {
+                alert('El precio es inválido. Debe ser un número positivo.');
+                return false;
+            }
+            if (isNaN(cantidad) || parseInt(cantidad) <= 0) {
+                alert('La cantidad es inválida. Debe ser un número entero positivo.');
+                return false;
+            }
+            return true;
+        }
+
+        </script>
+        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Nro Lote</th>
+                    <th>Droguería</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productos.forEach(producto => { %>
+                    <tr>
+                        <td><%= producto.nombre %></td>
+                        <td><%= producto.descripcion %></td>
+                        <td><%= producto.precio %></td>
+                        <td><%= producto.cantidad %></td>
+                        <td><%= producto.nrolote || 'N/A' %></td> <!-- Mostrar número de lote o N/A si es null -->
+                        <td><%= producto.drogueria %></td>
+                        <td>
+                            <a href="/productos/<%= producto.producto_id %>/editar">
+                                <button type="button">Editar</button>
+                            </a>
+                            <form action="/productos/<%= producto.producto_id %>/eliminar" method="POST" style="display:inline;">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        
+    </div>
+
+</body>
+</html>
