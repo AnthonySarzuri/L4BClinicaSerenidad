@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
+      <div
+        class="max-w-screen-lg m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1"
+      >
+        <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+          <div class="mt-12 flex flex-col items-center">
+            <h1 class="text-2xl xl:text-3xl font-extrabold">Registro</h1>
+
+            <% if (error_msg) { %>
+            <p class="text-red-500 mt-4"><%= error_msg %></p>
+            <% } %>
+
+            <div class="w-full flex-1 mt-8">
+              <form
+                action="/register"
+                method="POST"
+                class="mx-auto max-w-xs space-y-5"
+              >
+                <input
+                  class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  type="text"
+                  name="username"
+                  id="username"
+                  placeholder="Nombre de Usuario"
+                  required
+                />
+                <input
+                  class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Correo"
+                  required
+                />
+                <input
+                  class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Contraseña"
+                  required
+                />
+                <select
+                  name="role"
+                  id="role"
+                  class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  required
+                >
+                  <option value="Administrador">Administrador</option>
+                  <option value="Terapeuta">Terapeuta</option>
+                  <option value="Paciente">Paciente</option>
+                </select>
+                <button
+                  type="submit"
+                  class="mt-5 tracking-wide font-semibold bg-green-500 text-gray-100 w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                    />
+                  </svg>
+                  <span class="ml-3">Registrarse</span>
+                </button>
+              </form>
+
+              <p class="mt-6 text-sm text-center text-gray-600">
+                ¿Ya tienes cuenta?
+                <a href="/login" class="text-blue-600 hover:underline"
+                  >Inicia sesión</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
